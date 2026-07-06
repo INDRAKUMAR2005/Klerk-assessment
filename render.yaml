@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: klerk-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: NODE_ENV
+        value: production
+      - key: MISTRAL_API_KEY
+        sync: false
+      - key: MISTRAL_CHAT_MODEL
+        value: mistral-large-latest
+      - key: MISTRAL_EMBEDDING_MODEL
+        value: mistral-embed
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: UNIPILE_API_KEY
+        sync: false
+      - key: UNIPILE_API_URL
+        sync: false
+      - key: ARTISAN_WHATSAPP_ID
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REFRESH_TOKEN
+        sync: false
+      - key: GOOGLE_DRIVE_FOLDER_ID
+        sync: false
+      - key: GOOGLE_SHEET_ID
+        sync: false
+      - key: ACCOUNTANT_EMAIL
+        sync: false
+      - key: CONFIDENCE_THRESHOLD
+        value: "0.75"
