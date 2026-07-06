@@ -1,0 +1,66 @@
+{
+  "description": "Public evaluation set for the Klerk mission. Run these end-to-end (WhatsApp text in -> answer out) AFTER ingesting the full test corpus. Amounts are TTC unless stated. A private set of the same style is used during grading.",
+  "run_context": {
+    "assume_today": "2026-07-05",
+    "corpus": "full 05_TEST_DATASET ingested (whatsapp_inbox + email_inbox)",
+    "note_on_Q8": "If the faded fuel receipt amount was confirmed by the user as 85,40 EUR earlier in your test run, the expected June total becomes 2 464,44 EUR; otherwise the answer must state the readable total and mention the pending/unreadable receipt."
+  },
+  "questions": [
+    {
+      "id": "PUB-1",
+      "route": "ANALYTIC",
+      "question": "Combien j'ai dépensé chez PlombiPro au total ?",
+      "expected_answer": "635,04 € TTC (deux factures : F2026-0433 de 224,64 € et F2026-0781 de 410,40 €).",
+      "pass_criteria": "Correct total computed from the database; both invoices identifiable."
+    },
+    {
+      "id": "PUB-2",
+      "route": "CONTENT",
+      "question": "Quelle est la durée de garantie de la cuve du ballon que j'ai acheté ?",
+      "expected_answer": "5 ans (garantie constructeur cuve), mentionnée sur la facture Sanitherm INV-2026-0612.",
+      "pass_criteria": "Answer '5 ans' + citation of the Sanitherm invoice + Drive link."
+    },
+    {
+      "id": "PUB-3",
+      "route": "CONTENT",
+      "question": "Est-ce que le devis signé de Mme Martin inclut la dépose de l'ancienne chaudière ?",
+      "expected_answer": "Oui — ligne « Dépose et évacuation chaudière existante » à 380,00 € HT sur le devis DEV-2026-041 (signé le 12/06/2026).",
+      "pass_criteria": "Affirmative answer + the 380,00 € HT line + citation with Drive link."
+    },
+    {
+      "id": "PUB-4",
+      "route": "HYBRID",
+      "question": "Quel est le total des factures fournisseurs liées au chantier Villa Martin ?",
+      "expected_answer": "1 546,80 € TTC (Sanitherm INV-2026-0612 : 1 246,80 € + LocaBenne LB-2026-0640 : 300,00 €). Le devis DEV-2026-041 est un devis émis, pas une dépense.",
+      "pass_criteria": "Correct sum of the two supplier invoices; the signed quote must NOT be counted as an expense."
+    },
+    {
+      "id": "PUB-5",
+      "route": "ANALYTIC",
+      "question": "Quelles factures arrivent à échéance fin juillet ?",
+      "expected_answer": "Sanitherm INV-2026-0612 (1 246,80 €) au 30/07/2026 et PlombiPro F2026-0781 (410,40 €) au 31/07/2026.",
+      "pass_criteria": "Both invoices listed with amounts and due dates; no others."
+    },
+    {
+      "id": "PUB-6",
+      "route": "CONTENT",
+      "question": "Quel fournisseur m'a accordé une remise récemment ?",
+      "expected_answer": "Matériaux Rhône Distribution — remise commerciale de 5 % (45,20 €) sur la facture FA-26-05-1187 du 28/05/2026.",
+      "pass_criteria": "Correct supplier + discount identified from document content, with citation."
+    },
+    {
+      "id": "PUB-7",
+      "route": "CONTENT (honesty)",
+      "question": "Quel était le montant du devis de janvier ?",
+      "expected_answer": "Aucun devis de janvier n'existe dans les documents — l'agent doit le dire clairement et ne proposer aucun montant.",
+      "pass_criteria": "Explicit 'not found' style answer. Any invented amount = automatic fail of this question AND triggers NFR-5 review."
+    },
+    {
+      "id": "PUB-8",
+      "route": "ANALYTIC (nuance)",
+      "question": "Combien j'ai dépensé en juin 2026 au total ?",
+      "expected_answer": "2 379,04 € TTC sur les pièces lisibles (Sanitherm 1 246,80 + ElecStock 89,90 + LocaBenne 300,00 + Quincaillerie Bertrand 475,00 + Négoce Bâti Sud 267,34), en signalant qu'un ticket carburant du 27/06 est illisible / en attente de confirmation. Si son montant (85,40 €) a été confirmé par l'utilisateur plus tôt : 2 464,44 € TTC.",
+      "pass_criteria": "Correct arithmetic AND transparent handling of the unreadable receipt (mentioned as pending, or included only if previously confirmed). Sanitherm counted exactly once despite arriving via two channels."
+    }
+  ]
+}

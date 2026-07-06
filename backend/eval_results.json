@@ -1,0 +1,82 @@
+{
+  "timestamp": "2026-07-06T08:59:28.981Z",
+  "summary": {
+    "total": 8,
+    "passed": 3,
+    "passRate": "37.5%"
+  },
+  "results": [
+    {
+      "id": "PUB-1",
+      "question": "Combien j'ai dépensé chez PlombiPro au total ?",
+      "route": "ANALYTIC",
+      "expected": "635,04 € TTC (deux factures : F2026-0433 de 224,64 € et F2026-0781 de 410,40 €).",
+      "generated": "635,04 € TTC chez PLOMBIPRO FOURNITURES au total (2 pièces : F2026-0781 de 410,40 € (le 01/07/2026) et F2026-0433 de 224,64 € (le 15/04/2026)).",
+      "passed": true,
+      "explanation": "The generated answer correctly computes the total (635,04 € TTC) and identifies both invoices with their exact amounts, fully satisfying the pass criteria."
+    },
+    {
+      "id": "PUB-2",
+      "question": "Quelle est la durée de garantie de la cuve du ballon que j'ai acheté ?",
+      "route": "CONTENT",
+      "expected": "5 ans (garantie constructeur cuve), mentionnée sur la facture Sanitherm INV-2026-0612.",
+      "generated": "D'après le document de **SANITHERM LYON** (Document ID : photo_facture_sanitherm.jpg), la durée de garantie constructeur de la cuve du ballon thermodynamique est de **5 ans**.\n\nSource :\n- [Document Reference #1](https://drive.google.com/file/d/mock_drive_file_id_2026_06_12_FACTURE_SANITHERMLYON_1246_80EUR_jpg) (mention dans le contenu : *\"Garantie constructeur cuve : 5 ans (voir CGV art. 7)\"*).\n- [Document Reference #2](https://drive.google.com/file/d/mock_drive_file_id_2026_06_12_FACTURE_SANITHERMLYON_1246_80EUR_jpg) (mention dans la désignation du produit : *\"Ballon thermodynamique 200L - garantie constructeur cuve : 5 ans\"*).",
+      "passed": true,
+      "explanation": "The answer includes '5 ans', cites the Sanitherm invoice (via document references), and provides Drive links, fully satisfying the pass criteria."
+    },
+    {
+      "id": "PUB-3",
+      "question": "Est-ce que le devis signé de Mme Martin inclut la dépose de l'ancienne chaudière ?",
+      "route": "CONTENT",
+      "expected": "Oui — ligne « Dépose et évacuation chaudière existante » à 380,00 € HT sur le devis DEV-2026-041 (signé le 12/06/2026).",
+      "generated": "Oui, le devis signé de Mme Martin inclut bien la **dépose et l'évacuation de l'ancienne chaudière** pour un montant de **380,00 € HT**.\n\n**Source :**\n- [Document Reference #1] (MOREAU PLOMBERIE CHAUFFAGE, Devis DEV-2026-041)\n  Lien : [https://drive.google.com/file/d/mock_drive_file_id_2026_06_05_DEVIS_MOREAUPLOMBERIECHAUFFAGE_4774_00EUR_pdf](https://drive.google.com/file/d/mock_drive_file_id_2026_06_05_DEVIS_MOREAUPLOMBERIECHAUFFAGE_4774_00EUR_pdf)\n- [Document Reference #2] (mêmes détails en ligne par article).",
+      "passed": true,
+      "explanation": "The generated answer includes an affirmative response, the exact amount (380,00 € HT), and a Drive link citation as required by the pass criteria."
+    },
+    {
+      "id": "PUB-4",
+      "question": "Quel est le total des factures fournisseurs liées au chantier Villa Martin ?",
+      "route": "HYBRID",
+      "expected": "1 546,80 € TTC (Sanitherm INV-2026-0612 : 1 246,80 € + LocaBenne LB-2026-0640 : 300,00 €). Le devis DEV-2026-041 est un devis émis, pas une dépense.",
+      "generated": "3 412,70 € TTC au total de dépenses pour \"Villa Martin\".\n\nDétail des pièces :\n- NÉGOCE BÂTI SUD INV-NBS-26-0912 : 267,34 € [https://drive.google.com/file/d/mock_drive_file_id_2026_06_18_FACTURE_NEGOCEBATISUD_267_34EUR_jpg]\n- MATÉRIAUX RHÔNE DISTRIBUTION INV-FA-26-05-1187 : 1 030,56 € [https://drive.google.com/file/d/mock_drive_file_id_2026_05_28_FACTURE_MATERIAUXRHONEDISTRIBUTION_1030_56EUR_pdf]\n- CARRELAGES DU FOREZ INV-CF-2026-388 : 614,86 € [https://drive.google.com/file/d/mock_drive_file_id_2026_05_10_FACTURE_CARRELAGESDUFOREZ_614_86EUR_pdf]\n- ELECSTOCK SAS INV-EL-26-2210 : 89,90 € [https://drive.google.com/file/d/mock_drive_file_id_2026_06_03_FACTURE_ELECSTOCKSAS_89_90EUR_pdf]\n- LOCABENNE SERVICES INV-LB-2026-0640 : 300,00 € [https://drive.google.com/file/d/mock_drive_file_id_2026_06_20_FACTURE_LOCABENNESERVICES_300_00EUR_pdf]\n- PLOMBIPRO FOURNITURES INV-F2026-0781 : 410,40 € [https://drive.google.com/file/d/mock_drive_file_id_2026_07_01_FACTURE_PLOMBIPROFOURNITURES_410_40EUR_pdf]\n- PLOMBIPRO FOURNITURES INV-F2026-0433 : 224,64 € [https://drive.google.com/file/d/mock_drive_file_id_2026_04_15_FACTURE_PLOMBIPROFOURNITURES_224_64EUR_pdf]\n- QUINCAILLERIE BERTRAND INV-QB-1194 : 475,00 € [https://drive.google.com/file/d/mock_drive_file_id_2026_06_25_FACTURE_QUINCAILLERIEBERTRAND_475_00EUR_pdf]\n\nNote: Le ou les devis suivants ont été trouvés mais exclus des dépenses: Devis DEV-2026-041 (4 774,00 €) [https://drive.google.com/file/d/mock_drive_file_id_2026_06_05_DEVIS_MOREAUPLOMBERIECHAUFFAGE_4774_00EUR_pdf].",
+      "passed": false,
+      "explanation": "The generated answer includes incorrect invoices and sums (3 412,70 € instead of 1 546,80 €), failing to match the expected total of the two specified supplier invoices."
+    },
+    {
+      "id": "PUB-5",
+      "question": "Quelles factures arrivent à échéance fin juillet ?",
+      "route": "ANALYTIC",
+      "expected": "Sanitherm INV-2026-0612 (1 246,80 €) au 30/07/2026 et PlombiPro F2026-0781 (410,40 €) au 31/07/2026.",
+      "generated": "Factures arrivant à échéance :\n- NÉGOCE BÂTI SUD (facture NBS-26-0912) pour 267,34 € au 18/07/2026\n- SANITHERM LYON (facture INV-2026-0612) pour 1 246,80 € au 30/07/2026\n- ELECSTOCK SAS (facture EL-26-2210) pour 89,90 € au 03/07/2026\n- LOCABENNE SERVICES (facture LB-2026-0640) pour 300,00 € au 20/07/2026\n- PLOMBIPRO FOURNITURES (facture F2026-0781) pour 410,40 € au 31/07/2026\n- QUINCAILLERIE BERTRAND (facture QB-1194) pour 475,00 € au 25/07/2026",
+      "passed": false,
+      "explanation": "The generated answer includes additional invoices not specified in the pass criteria and fails to exclusively list the two expected invoices."
+    },
+    {
+      "id": "PUB-6",
+      "question": "Quel fournisseur m'a accordé une remise récemment ?",
+      "route": "CONTENT",
+      "expected": "Matériaux Rhône Distribution — remise commerciale de 5 % (45,20 €) sur la facture FA-26-05-1187 du 28/05/2026.",
+      "generated": "D'après les documents fournis, le fournisseur **MATÉRIAUX RHÔNE DISTRIBUTION** vous a accordé une **remise fidélité professionnelle**, comme mentionné dans la facture :\n\n- **Document** : facture_rhone_distribution_FA-26-05-1187.pdf\n- **Lien** : [Facture MATÉRIAUX RHÔNE DISTRIBUTION](https://drive.google.com/file/d/mock_drive_file_id_2026_05_28_FACTURE_MATERIAUXRHONEDISTRIBUTION_1030_56EUR_pdf)\n\nJe ne trouve pas d'autres mentions de remise dans les autres documents.",
+      "passed": false,
+      "explanation": "The generated answer does not specify the discount amount (5%) or the exact discount value (45,20 €) as required by the pass criteria."
+    },
+    {
+      "id": "PUB-7",
+      "question": "Quel était le montant du devis de janvier ?",
+      "route": "CONTENT (honesty)",
+      "expected": "Aucun devis de janvier n'existe dans les documents — l'agent doit le dire clairement et ne proposer aucun montant.",
+      "generated": "0,00 € TTC sur les pièces lisibles (aucune pièce enregistrée)",
+      "passed": false,
+      "explanation": "The answer invents a monetary amount ('0,00 € TTC') instead of explicitly stating that no devis for January exists in the documents."
+    },
+    {
+      "id": "PUB-8",
+      "question": "Combien j'ai dépensé en juin 2026 au total ?",
+      "route": "ANALYTIC (nuance)",
+      "expected": "2 379,04 € TTC sur les pièces lisibles (Sanitherm 1 246,80 + ElecStock 89,90 + LocaBenne 300,00 + Quincaillerie Bertrand 475,00 + Négoce Bâti Sud 267,34), en signalant qu'un ticket carburant du 27/06 est illisible / en attente de confirmation. Si son montant (85,40 €) a été confirmé par l'utilisateur plus tôt : 2 464,44 € TTC.",
+      "generated": "2 464,43 € TTC sur les pièces lisibles (NÉGOCE BÂTI SUD (267,34 €) + SANITHERM LYON (1 246,80 €) + STATION TOTALSERVICE (85,39 €) + ELECSTOCK SAS (89,90 €) + LOCABENNE SERVICES (300,00 €) + QUINCAILLERIE BERTRAND (475,00 €)), en signalant que 1 document(s) (bl_sanitherm_BL-7734.pdf) sont illisibles ou en attente de confirmation.",
+      "passed": false,
+      "explanation": "The generated answer includes an incorrect total (2 464,43 € instead of 2 464,44 €), misrepresents the illisible ticket as a different document (bl_sanitherm_BL-7734.pdf instead of the carburant ticket), and fails to explicitly state the pending confirmation status of the 85,40 € carburant ticket."
+    }
+  ]
+}
