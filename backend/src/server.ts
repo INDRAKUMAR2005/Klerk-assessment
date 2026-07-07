@@ -17,11 +17,19 @@ app.use(express.json());
 validateConfig();
 
 /**
+ * Home endpoint
+ */
+app.get('/', (req: Request, res: Response) => {
+  res.send('Klerk Backend API is running successfully. Try /health for status.');
+});
+
+/**
  * Health check endpoint
  */
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
+
 
 /**
  * Unipile webhook receiver (Flow A / WhatsApp text or attachments)
