@@ -43,15 +43,23 @@ app.post('/api/webhooks/unipile', async (req: Request, res: Response) => {
     return;
   }
 
-  // Ensure message is from the artisan (Julien) to prevent responding to our own messages
-  const senderId = sender?.attendee_provider_id;
+  // Ensure message is from the artisan to prevent responding to our own messages
+  const senderId = sender?.attendee_provider_id || sender?.id || '';
   const artisanId = config.unipile.artisanWhatsappId;
   
-  if (senderId !== artisanId) {
+  // Normalize: strip @c.us and compare just the phone numbers
+  const normalizeId = (id: string) => id.replace(/@c\.us$/i, '').replace(/@.*$/, '').trim();
+  const senderNorm = normalizeId(senderId);
+  const artisanNorm = normalizeId(artisanId);
+
+  console.log(`[Unipile Webhook] Sender: "${senderId}" (normalized: "${senderNorm}"), Artisan: "${artisanId}" (normalized: "${artisanNorm}")`);
+  
+  if (senderNorm !== artisanNorm) {
     console.log(`[Unipile Webhook] Ignoring message from non-artisan sender: ${senderId}`);
     res.sendStatus(200);
     return;
   }
+
 
   console.log(`[Unipile Webhook] Received message ${message_id} in chat ${chat_id} from Julien: "${message || 'with attachments'}"`);
 
