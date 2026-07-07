@@ -84,7 +84,7 @@ If ANALYTIC, select one of the following tools:
 Assume today's date is: ${assumeToday}.
 Extract entities for the tools if possible:
 - 'supplierName': Supplier/merchant name (string or null).
-- 'startDate': Start date YYYY-MM-DD (string or null). Interpret terms like "fin juillet" or "juin 2026" relative to the assume today date. E.g. "juin 2026" is startDate "2026-06-01" to endDate "2026-06-30". "fin juillet 2026" is due date range "2026-07-25" to "2026-07-31" (the last week of the month).
+- 'startDate': Start date YYYY-MM-DD (string or null). Interpret terms like "fin juillet" or "juin 2026" relative to the assume today date. E.g. "juin 2026" is startDate "2026-06-01" to endDate "2026-06-30". "fin juillet 2026" means the very end of July, so use startDate "2026-07-28" to endDate "2026-07-31" (the last 3-4 days of the month ONLY). Do NOT use 25th as the start for "fin".
 - 'endDate': End date YYYY-MM-DD (string or null).
 - 'chantierRef': Chantier reference name if mentioned. VERY IMPORTANT: If a chantier is mentioned (e.g. "Villa Martin", "Martin"), extract it here. Do not leave it null.
 - 'searchTerm': A text query for vector search (string or null). E.g. if the question is about "remise" or "garantie", this should be "remise" or "garantie" respectively. If it's a HYBRID query about a chantier, this can be the chantier name.
