@@ -323,12 +323,13 @@ Rates: ${extracted.vatRates.join(', ')}%`;
       if (!cleanPara) continue;
       
       // Don't index extremely short sentences, keep meaningful blocks
-      if (cleanPara.length > 30) {
+      if (cleanPara.length > 10) {
         chunks.push({
           content: cleanPara,
           kind: 'paragraph'
         });
       }
+
     }
 
     // Embed and insert chunks
