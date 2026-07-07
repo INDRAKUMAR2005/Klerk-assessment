@@ -15,6 +15,22 @@ const CATEGORY_NAMES: Record<string, string> = {
   other: 'Autres documents',
 };
 
+function formatDbDateToFrench(dateVal: any): string {
+  if (!dateVal) return 'Inconnue';
+  if (dateVal instanceof Date) {
+    const year = dateVal.getFullYear();
+    const month = (dateVal.getMonth() + 1).toString().padStart(2, '0');
+    const day = dateVal.getDate().toString().padStart(2, '0');
+    return `${day}/${month}/${year}`;
+  }
+  const dateStr = String(dateVal);
+  const parts = dateStr.split('T')[0].split('-');
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  return dateStr;
+}
+
 /**
  * Generate monthly recap HTML and CSV attachment, and email it to the accountant
  */
@@ -187,7 +203,7 @@ export async function generateMonthlyRecap(period: string): Promise<void> {
     anomaliesHtml += `<li style="margin-top: 10px;"><strong>Factures en retard de paiement (${overdueInvoices.length}) :</strong><ul>`;
     for (const doc of overdueInvoices) {
       const ttc = formatCentsToFrench(doc.totalTtc);
-      const formattedDueDate = doc.dueDate.split('-').reverse().join('/');
+      const formattedDueDate = formatDbDateToFrench(doc.dueDate);
       anomaliesHtml += `<li>${doc.supplierName || 'Fournisseur'} : ${ttc} (Échéance dépassée le ${formattedDueDate}). <a href="${doc.driveLink}">Lien Drive</a></li>`;
     }
     anomaliesHtml += `</ul></li>`;
@@ -224,7 +240,7 @@ export async function generateMonthlyRecap(period: string): Promise<void> {
   for (const doc of docs) {
     if (doc.status !== 'filed' && doc.status !== 'anomaly') continue;
     const ttc = formatCentsToFrench(doc.totalTtc);
-    const docDate = doc.docDate ? doc.docDate.split('-').reverse().join('/') : 'Inconnue';
+    const docDate = formatDbDateToFrench(doc.docDate);
     html += `<li style="margin-bottom: 5px;">${docDate} - <strong>${doc.supplierName || 'Fournisseur'}</strong> - ${CATEGORY_NAMES[doc.docType || 'other']} : ${doc.totalTtc !== null ? ttc : 'N/A'} (<a href="${doc.driveLink}">Lien Drive</a>)</li>`;
   }
   html += `</ul>`;
