@@ -43,18 +43,21 @@ app.post('/api/webhooks/unipile', async (req: Request, res: Response) => {
     return;
   }
 
-  // Ensure message is from the artisan to prevent responding to our own messages
+  // Ensure message is from a trusted artisan to prevent responding to our own messages
   const senderId = sender?.attendee_provider_id || sender?.id || '';
   const artisanId = config.unipile.artisanWhatsappId;
   
   // Normalize: strip @c.us and compare just the phone numbers
   const normalizeId = (id: string) => id.replace(/@c\.us$/i, '').replace(/@.*$/, '').trim();
   const senderNorm = normalizeId(senderId);
-  const artisanNorm = normalizeId(artisanId);
 
-  console.log(`[Unipile Webhook] Sender: "${senderId}" (normalized: "${senderNorm}"), Artisan: "${artisanId}" (normalized: "${artisanNorm}")`);
+  // Support comma-separated list of artisan IDs: e.g. "919095334806,917349190213"
+  const artisanIds = artisanId.split(',').map(normalizeId).filter(Boolean);
+  const isArtisan = artisanIds.includes(senderNorm);
+
+  console.log(`[Unipile Webhook] Sender: "${senderId}" (normalized: "${senderNorm}"), Trusted artisans: [${artisanIds.join(', ')}]`);
   
-  if (senderNorm !== artisanNorm) {
+  if (!isArtisan) {
     console.log(`[Unipile Webhook] Ignoring message from non-artisan sender: ${senderId}`);
     res.sendStatus(200);
     return;
