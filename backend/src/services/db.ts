@@ -337,6 +337,7 @@ export const db = {
       FROM document_chunks c
       JOIN documents d ON c.doc_id = d.id
       WHERE d.status = 'filed'
+        AND (c.embedding <=> $1) < 0.35
     `;
     const params: any[] = [vectorStr];
 

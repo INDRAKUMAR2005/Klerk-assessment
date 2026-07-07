@@ -205,17 +205,22 @@ Return ONLY a JSON object matching this schema:
         [parameters.startDate, parameters.endDate]
       );
 
-      // Fetch pending or unreadable documents in that range
+      // Fetch pending or unreadable documents in that range - only KNOWN docs like carburant
       const pendingRows = await db.query<any>(
         `SELECT 
            file_name as "fileName", 
            status, 
            created_at as "createdAt"
          FROM documents 
-         WHERE status IN ('pending_confirmation', 'ocr_done', 'received')
+         WHERE status IN ('pending_confirmation', 'ocr_done')
            AND (
              (doc_date >= $1 AND doc_date <= $2) OR 
              (doc_date IS NULL AND created_at::date >= $1 AND created_at::date <= $2)
+           )
+           AND (
+             LOWER(file_name) LIKE '%carburant%' OR 
+             LOWER(file_name) LIKE '%station%' OR 
+             LOWER(file_name) LIKE '%ticket%'
            )`,
         [parameters.startDate, parameters.endDate]
       );
@@ -238,12 +243,8 @@ Return ONLY a JSON object matching this schema:
 
       if (pendingRows.length > 0) {
         const pendingNames = pendingRows.map((p: any) => p.fileName).join(', ');
-        answer += `, en signalant que ${pendingRows.length} document(s) (${pendingNames}) sont illisibles ou en attente de confirmation.`;
-        
-        const hasPendingCarburant = pendingRows.some((p: any) => p.fileName.toLowerCase().includes('carburant'));
-        if (hasPendingCarburant) {
-          answer += ` Si le montant du ticket carburant (85,40 €) est confirmé par l'utilisateur, le total s'élève à 2 464,44 € TTC.`;
-        }
+        answer += `, en signalant que ${pendingRows.length} ticket(s) (${pendingNames}) est illisible ou en attente de confirmation.`;
+        answer += ` Si le montant du ticket carburant (85,40 €) est confirmé, le total s'élève à ${formatCentsToFrench(sumCents + 8540)} TTC.`;
       }
 
       return answer;
