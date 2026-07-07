@@ -4,6 +4,33 @@ Klerk is an AI-powered administrative assistant that turns WhatsApp and Gmail in
 
 ---
 
+## 🌐 Live Deployment Links
+
+| Service | URL |
+|---|---|
+| 🖥️ **Ops Dashboard (Frontend)** | https://klerk-assessment-frontend.vercel.app |
+| ⚙️ **Backend API** | https://klerk-backend-bmpl.onrender.com |
+| 📊 **Health Check** | https://klerk-backend-bmpl.onrender.com/health |
+| 📋 **Documents API** | https://klerk-backend-bmpl.onrender.com/api/documents |
+
+### 💬 WhatsApp — How to Test
+
+The Klerk assistant is connected to this WhatsApp number via Unipile:
+
+> **📱 Send your invoice or question to: +91 90953 34806**
+
+**Artisan (trusted sender):** `917349190213` — messages from this number will be processed.
+
+**What to send:**
+- 📸 A photo of an invoice → Klerk OCRs, extracts, files it, and replies in French
+- 📄 A PDF invoice → same as above
+- 💬 A text question in French → RAG Q&A replies instantly
+  - *"Combien j'ai dépensé chez PlombiPro ?"*
+  - *"Quelle est la garantie de la cuve ?"*
+  - *"Quelles factures arrivent à échéance fin juillet ?"*
+
+---
+
 ## 🛠️ Tech Stack & Requirements
 - **Runtime**: Node.js ≥ 20
 - **Database**: Supabase (PostgreSQL) + `pgvector`
@@ -72,7 +99,7 @@ npm run reset --workspace=backend
 To verify that webhooks are idempotent and do not create duplicate records on retry, you can trigger a simulated duplicate webhook request:
 ```bash
 # Propose a POST request twice with the same provider message ID:
-curl -X POST http://localhost:3001/api/webhooks/unipile \
+curl -X POST https://klerk-backend-bmpl.onrender.com/api/webhooks/unipile \
   -H "Content-Type: application/json" \
   -d '{"event":"message_received","account_type":"WHATSAPP","message_id":"test_id_123","chat_id":"33612345678@c.us","sender":{"attendee_provider_id":"33612345678@c.us"},"attachments":[{"id":"att_123","mime_type":"image/jpeg","filename":"facture.jpg"}]}'
 ```
@@ -92,7 +119,7 @@ curl -X POST http://localhost:3001/api/webhooks/unipile \
 | `DATABASE_URL` | Direct connection string for PostgreSQL (pooler or session). |
 | `UNIPILE_API_KEY` | Unipile access token. |
 | `UNIPILE_API_URL` | Unipile server endpoint. |
-| `ARTISAN_WHATSAPP_ID` | Julien's WhatsApp number ID (e.g. `33612345678@c.us`). |
+| `ARTISAN_WHATSAPP_ID` | Trusted artisan WhatsApp number(s). Supports comma-separated multiple IDs (e.g. `919095334806,917349190213`). The `@c.us` suffix is optional — the system normalizes automatically. |
 | `GOOGLE_CLIENT_ID` | Google Cloud Console OAuth 2.0 client ID. |
 | `GOOGLE_CLIENT_SECRET` | Google Cloud Console OAuth 2.0 client secret. |
 | `GOOGLE_REFRESH_TOKEN` | OAuth refresh token for Gmail, Drive, and Sheets. |
