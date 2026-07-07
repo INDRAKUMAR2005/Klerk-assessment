@@ -265,12 +265,28 @@ Return ONLY a JSON object matching this schema:
     const embedding = await mistral.getEmbedding(searchTerm);
 
     // B. Search pgvector chunks database with pre-filtering metadata (F-5.1)
-    const matchedChunks = await db.searchVectorChunks(
+    let matchedChunks = await db.searchVectorChunks(
       embedding,
-      10, // limit
+      12, // limit - higher to increase recall
       undefined, // type pre-filter (could extend)
       filterSupplier
     );
+
+    // Fallback: If strict threshold returned 0 chunks, try with all filed docs chunks (no threshold)
+    if (matchedChunks.length === 0) {
+      const vectorStr = `[${embedding.join(',')}]`;
+      const fallbackSql = `
+        SELECT 
+          c.id, c.doc_id as "docId", c.chunk_index as "chunkIndex", c.content, c.chunk_kind as "chunkKind",
+          d.supplier_name as "supplierName", d.drive_link as "driveLink", d.file_name as "fileName",
+          (c.embedding <=> $1) as distance
+        FROM document_chunks c
+        JOIN documents d ON c.doc_id = d.id
+        WHERE d.status = 'filed'
+        ORDER BY distance ASC LIMIT 8
+      `;
+      matchedChunks = await db.query<any>(fallbackSql, [vectorStr]);
+    }
 
     if (matchedChunks.length === 0) {
       return `Je ne trouve pas d'informations correspondantes dans tes documents classés.`;
@@ -292,7 +308,11 @@ ${c.content}`
     const systemPrompt = `You are a helpful accounting assistant. Answer the artisan's question in French, based ONLY on the provided document contexts below.
 If the answer is not supported by the context, state clearly that you cannot find this information in the documents (F-5.4). Never invent any dates or amounts.
 
-When answering, you MUST cite the source documents (Supplier, Document ID/Type) and include their Google Drive links exactly as provided in the context.
+IMPORTANT:
+- If the question asks about whether a specific work item is included (e.g. "dépose de l'ancienne chaudière"), look for it SPECIFICALLY in the line items of the document chunks provided.
+- If the item IS present in the context, answer "Oui" affirmatively with the exact wording from the document.
+- If the item is NOT present, state clearly "Je ne trouve pas cette ligne dans le devis."
+- Always cite the source document (Supplier, File Name) and include their Google Drive link exactly as provided in the context.
 
 Context documents:
 ${contextText}`;
@@ -300,6 +320,7 @@ ${contextText}`;
     const answer = await mistral.generateResponse(systemPrompt, question);
     return answer;
   },
+
 
   /**
    * Handle HYBRID route queries: Semantic search to retrieve documents, then numeric arithmetic (Flow E, F-5.5)
