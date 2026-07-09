@@ -126,9 +126,10 @@ app.post('/api/webhooks/unipile', async (req: Request, res: Response) => {
       
       let enqueuedCount = 0;
       for (const att of attachments) {
-        if (!att.id) continue;
+        const attachmentId = att.attachment_id || att.id;
+        if (!attachmentId) continue;
         
-        const providerMessageId = `${message_id}:${att.id}`;
+        const providerMessageId = `${message_id}:${attachmentId}`;
         
         // Idempotency check: check if already processed or processing
         const existing = await db.getDocumentByMessageId(providerMessageId);
@@ -137,11 +138,18 @@ app.post('/api/webhooks/unipile', async (req: Request, res: Response) => {
           continue;
         }
 
-        // Determine mime-type based on attachment index if possible (or default)
-        const mimeType = att.mime_type || 'application/octet-stream';
-        const filename = att.filename || `whatsapp_doc_${att.id}`;
+        // Determine mime-type and filename
+        let mimeType = att.mimetype || att.mime_type || 'application/octet-stream';
+        if (att.attachment_type === 'img' || att.type === 'img') {
+          mimeType = 'image/jpeg';
+        }
+        
+        const filename = att.filename || `whatsapp_doc_${attachmentId}`;
         
         let fileExtension = 'pdf';
+        if (mimeType.startsWith('image/')) {
+          fileExtension = 'jpg';
+        }
         const match = /\.([a-zA-Z0-9]+)$/.exec(filename);
         if (match) fileExtension = match[1].toLowerCase();
 
