@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import axios from 'axios';
 import { config, validateConfig } from './config';
 import { startQueue, enqueueJob } from './queue';
 import db from './services/db';
@@ -53,10 +54,32 @@ app.post('/api/webhooks/unipile', async (req: Request, res: Response) => {
 
   // Support comma-separated list of artisan IDs: e.g. "919095334806,917349190213"
   const artisanIds = artisanId.split(',').map(normalizeId).filter(Boolean);
-  const isArtisan = artisanIds.includes(senderNorm);
+  let isArtisan = artisanIds.includes(senderNorm);
 
   console.log(`[Unipile Webhook] Sender: "${senderId}" (normalized: "${senderNorm}"), Trusted artisans: [${artisanIds.join(', ')}]`);
   
+  if (!isArtisan && chat_id) {
+    try {
+      const chatUrl = `${config.unipile.apiUrl}/api/v1/chats/${chat_id}`;
+      const chatRes = await axios.get(chatUrl, {
+        headers: {
+          'X-API-KEY': config.unipile.apiKey,
+          'accept': 'application/json',
+        },
+      });
+      const attendeeIdentifier = chatRes.data?.attendee_public_identifier || '';
+      if (attendeeIdentifier) {
+        const attendeeNorm = normalizeId(attendeeIdentifier);
+        if (artisanIds.includes(attendeeNorm)) {
+          isArtisan = true;
+          console.log(`[Unipile Webhook] Verified sender via chat attendee public identifier: ${attendeeIdentifier}`);
+        }
+      }
+    } catch (err: any) {
+      console.warn(`[Unipile Webhook] Failed to fetch chat details for verification: ${err.message}`);
+    }
+  }
+
   if (!isArtisan) {
     console.log(`[Unipile Webhook] Ignoring message from non-artisan sender: ${senderId}`);
     res.sendStatus(200);

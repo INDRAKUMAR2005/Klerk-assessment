@@ -309,10 +309,10 @@ ${c.content}`
 If the answer is not supported by the context, state clearly that you cannot find this information in the documents (F-5.4). Never invent any dates or amounts.
 
 IMPORTANT:
-- If the question asks about whether a specific work item is included (e.g. "dépose de l'ancienne chaudière"), look for it SPECIFICALLY in the line items of the document chunks provided.
-- If the item IS present in the context, answer "Oui" affirmatively with the exact wording from the document.
+- If the question asks about whether a specific work item is included (e.g. "dépose de l'ancienne chaudière"), inspect the line items in the provided context carefully.
+- If it is included, answer "Oui" affirmatively. You MUST specify the exact line item name (e.g., "Dépose et évacuation chaudière existante"), its exact price/amount (e.g., "380,00 € HT"), and the date of signature/document if present (e.g., "signé le 12/06/2026").
 - If the item is NOT present, state clearly "Je ne trouve pas cette ligne dans le devis."
-- Always cite the source document (Supplier, File Name) and include their Google Drive link exactly as provided in the context.
+- Always cite the source document (Supplier, File Name) and include its Google Drive link exactly as provided in the context.
 
 Context documents:
 ${contextText}`;
@@ -327,29 +327,47 @@ ${contextText}`;
    */
   async handleHybrid(route: RouterResult, question: string): Promise<string> {
     const searchTerm = route.parameters.chantierRef || route.parameters.searchTerm || question;
+    let docs: any[] = [];
 
-    // A. Vector search to find matching chunks
-    const embedding = await mistral.getEmbedding(searchTerm);
-    const chunks = await db.searchVectorChunks(embedding, 10);
-
-    if (chunks.length === 0) {
-      return `Aucun document n'est associé au chantier ou terme "${searchTerm}".`;
+    // If we have a structured chantierRef, try querying the database directly by chantier_ref first to avoid weak vector matches (F-5.5)
+    if (route.parameters.chantierRef) {
+      docs = await db.query<any>(
+        `SELECT 
+          id, supplier_name as "supplierName", doc_number as "docNumber", 
+          total_ttc as "totalTtc", doc_type as "docType", drive_link as "driveLink",
+          doc_date as "docDate", chantier_ref as "chantierRef"
+         FROM documents 
+         WHERE status = 'filed'
+           AND (LOWER(chantier_ref) = LOWER($1) OR LOWER(chantier_ref) LIKE '%' || LOWER($1) || '%' OR LOWER($1) LIKE '%' || LOWER(chantier_ref) || '%')`,
+        [route.parameters.chantierRef]
+      );
     }
 
-    // B. Extract unique document IDs from vector results
-    const docIds = Array.from(new Set(chunks.map((c: any) => c.docId)));
+    // Fallback to vector search if no chantierRef was provided or no docs matched the chantierRef directly
+    if (docs.length === 0) {
+      // A. Vector search to find matching chunks
+      const embedding = await mistral.getEmbedding(searchTerm);
+      const chunks = await db.searchVectorChunks(embedding, 10);
 
-    // C. Load full document metadata records
-    const placeHolders = docIds.map((_, i) => `$${i + 1}`).join(',');
-    const docs = await db.query<any>(
-      `SELECT 
-        id, supplier_name as "supplierName", doc_number as "docNumber", 
-        total_ttc as "totalTtc", doc_type as "docType", drive_link as "driveLink",
-        doc_date as "docDate"
-       FROM documents 
-       WHERE id IN (${placeHolders}) AND status = 'filed'`,
-      docIds
-    );
+      if (chunks.length === 0) {
+        return `Aucun document n'est associé au chantier ou terme "${searchTerm}".`;
+      }
+
+      // B. Extract unique document IDs from vector results
+      const docIds = Array.from(new Set(chunks.map((c: any) => c.docId)));
+
+      // C. Load full document metadata records
+      const placeHolders = docIds.map((_, i) => `$${i + 1}`).join(',');
+      docs = await db.query<any>(
+        `SELECT 
+          id, supplier_name as "supplierName", doc_number as "docNumber", 
+          total_ttc as "totalTtc", doc_type as "docType", drive_link as "driveLink",
+          doc_date as "docDate"
+         FROM documents 
+         WHERE id IN (${placeHolders}) AND status = 'filed'`,
+        docIds
+      );
+    }
 
     // D. Filter out quotes (non-expenses) and delivery notes (no values)
     // F-5.1: Signed quotes must NOT be counted as expenses, only supplier invoices and receipts

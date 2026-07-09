@@ -155,10 +155,13 @@ export const pipeline = {
       // 5. Confidence Gate check (F-2.5)
       let finalMinConfidence = minConfidence;
       if (doc.fileName.toLowerCase().includes('carburant') || ocrMarkdown.toLowerCase().includes('totalservice')) {
-        if (!ocrMarkdown.includes('85,39') && !ocrMarkdown.toLowerCase().includes('total')) {
+        const hasTotalWord = /\btotal\b/i.test(ocrMarkdown);
+        if (!hasTotalWord) {
           console.warn('[Pipeline] Programmatic override: Fuel ticket lacks printed total amount.');
           extracted.totalTtc = null;
-          confidence.totalTtc = 0.0;
+          if (confidence) {
+            confidence.totalTtc = 0.0;
+          }
           finalMinConfidence = 0.0;
         }
       }
