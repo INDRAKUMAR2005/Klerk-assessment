@@ -12,6 +12,12 @@ import { generateMonthlyRecap } from './scripts/trigger_recap';
 const app = express();
 
 app.use(cors());
+app.use((req, res, next) => {
+  if (req.path === '/api/webhooks/unipile') {
+    req.headers['content-type'] = 'application/json';
+  }
+  next();
+});
 app.use(express.json());
 
 export const webhookLogs: string[] = [];
