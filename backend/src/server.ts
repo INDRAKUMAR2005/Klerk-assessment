@@ -61,7 +61,7 @@ app.post('/api/webhooks/unipile', async (req: Request, res: Response) => {
   }
 
   // Discard messages sent by the bot itself to prevent infinite loops (NFR-1 / webhook loop)
-  if (req.body.from_me === true || req.body.message?.from_me === true) {
+  if (req.body.from_me === true || req.body.message?.from_me === true || req.body.is_sender === true || req.body.is_sender === 1) {
     res.sendStatus(200);
     return;
   }
