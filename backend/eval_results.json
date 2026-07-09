@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-09T09:15:12.661Z",
+  "timestamp": "2026-07-09T11:14:15.425Z",
   "summary": {
     "total": 8,
     "passed": 8,
@@ -20,18 +20,18 @@
       "question": "Quelle est la durée de garantie de la cuve du ballon que j'ai acheté ?",
       "route": "CONTENT",
       "expected": "5 ans (garantie constructeur cuve), mentionnée sur la facture Sanitherm INV-2026-0612.",
-      "generated": "D'après le document **SANITHERM LYON** (photo_facture_sanitherm.jpg), la garantie constructeur de la cuve du ballon thermodynamique 200L est de **5 ans**.\n\nSource :\n- **Fournisseur** : SANITHERM LYON\n- **Fichier** : [photo_facture_sanitherm.jpg](https://drive.google.com/file/d/1EDTHE2ELk-sIzGm1YOuQZ9GrgiOybKWA/view?usp=drivesdk)",
+      "generated": "D'après le document fourni (Supplier: SANITHERM LYON, File Name: photo_facture_sanitherm.jpg), la durée de garantie de la cuve du ballon thermodynamique est de **5 ans** (mentionné dans la désignation de l'article : *\"Ballon thermodynamique 200L - garantie constructeur cuve : 5 ans\"*).\n\nSource : [Lien Google Drive](https://drive.google.com/file/d/1EDTHE2ELk-sIzGm1YOuQZ9GrgiOybKWA/view?usp=drivesdk)",
       "passed": true,
-      "explanation": "The generated answer includes '5 ans', cites the Sanitherm source, and provides a Drive link, fully satisfying the pass criteria."
+      "explanation": "The answer includes '5 ans', cites the Sanitherm invoice details, and provides a Drive link, fully satisfying the pass criteria."
     },
     {
       "id": "PUB-3",
       "question": "Est-ce que le devis signé de Mme Martin inclut la dépose de l'ancienne chaudière ?",
       "route": "CONTENT",
       "expected": "Oui — ligne « Dépose et évacuation chaudière existante » à 380,00 € HT sur le devis DEV-2026-041 (signé le 12/06/2026).",
-      "generated": "Oui, le devis signé de Mme Martin inclut bien la dépose de l'ancienne chaudière.\n\n**Détails :**\n- Ligne exacte : *\"Dépose et évacuation chaudière existante\"*\n- Montant HT : **380,00 €**\n- Document source : *MOREAU PLOMBERIE CHAUFFAGE*, **devis_signe_martin_DEV-2026-041_scan.pdf**\n- Lien Google Drive : [devis_signe_martin_DEV-2026-041_scan.pdf](https://drive.google.com/file/d/1KIgvg2PmQUxdWX02Ag2odIcq8KrLN4x6/view?usp=drivesdk)\n\n*(La date de signature n'est pas précisée dans les extraits fournis.)*",
+      "generated": "Oui, le devis signé de Mme Martin inclut bien la dépose de l'ancienne chaudière.\n\n**Détails :**\n- **Ligne exacte :** *\"Dépose et évacuation chaudière existante\"*\n- **Montant HT :** *380,00 €*\n- **Document source :** MOREAU PLOMBERIE CHAUFFAGE, *devis_signe_martin_DEV-2026-041_scan.pdf*\n- **Lien Google Drive :** [Accéder au devis](https://drive.google.com/file/d/1KIgvg2PmQUxdWX02Ag2odIcq8KrLN4x6/view?usp=drivesdk)",
       "passed": true,
-      "explanation": "The generated answer includes an affirmative response, the 380,00 € HT line, and a Drive link citation, fully satisfying the pass criteria."
+      "explanation": "The generated answer includes an affirmative response, the exact line with the 380,00 € HT amount, and a Drive link citation as required."
     },
     {
       "id": "PUB-4",
@@ -56,18 +56,18 @@
       "question": "Quel fournisseur m'a accordé une remise récemment ?",
       "route": "CONTENT",
       "expected": "Matériaux Rhône Distribution — remise commerciale de 5 % (45,20 €) sur la facture FA-26-05-1187 du 28/05/2026.",
-      "generated": "D'après les documents fournis, une remise a été accordée par **MATÉRIAUX RHÔNE DISTRIBUTION** sur la facture **FA-26-05-1187** (Document Reference #10).\n\nVoici les détails :\n- **Remise commerciale de 5 %** pour un montant de **-45,20 € HT**.\n- Document signé ou émis sans date précise visible dans le contexte, mais le numéro de facture suggère une émission en **mai 2026**.\n\nSource : [Facture MATÉRIAUX RHÔNE DISTRIBUTION (FA-26-05-1187)](https://drive.google.com/file/d/1teC6oqaLCqyFdknhMX_TxXFyni_mwDGg/view?usp=drivesdk).",
+      "generated": "D'après les documents fournis, une remise a été accordée par **MATÉRIAUX RHÔNE DISTRIBUTION** sur la facture **FA-26-05-1187**.\n\nVoici les détails :\n- **Ligne concernée** : *Remise commerciale 5%*\n- **Montant de la remise** : **-45,20 € HT**\n- **Document source** : [facture_rhone_distribution_FA-26-05-1187.pdf](https://drive.google.com/file/d/1teC6oqaLCqyFdknhMX_TxXFyni_mwDGg/view?usp=drivesdk).\n\nAucune autre remise n'est mentionnée dans les autres documents.",
       "passed": true,
-      "explanation": "The generated answer correctly identifies the supplier, discount, and facture details with a citation, fully satisfying the pass criteria."
+      "explanation": "The generated answer correctly identifies the supplier, discount details, and citation as required by the pass criteria."
     },
     {
       "id": "PUB-7",
       "question": "Quel était le montant du devis de janvier ?",
       "route": "CONTENT (honesty)",
       "expected": "Aucun devis de janvier n'existe dans les documents — l'agent doit le dire clairement et ne proposer aucun montant.",
-      "generated": "Je ne trouve pas d'information concernant un devis daté de janvier dans les documents fournis (F-5.4). Les documents disponibles concernent des factures émises entre avril et juillet 2026.",
+      "generated": "D'après les documents fournis, **je ne trouve pas d'information concernant un devis daté de janvier 2026**. Les factures disponibles couvrent les mois d'avril, mai, juin et juillet 2026, mais aucune ne mentionne un devis ou une facture de janvier.\n\n*(Source : Analyse des documents F-5.4 fournis, sans exception.)*",
       "passed": true,
-      "explanation": "The answer explicitly states that no devis for January exists in the documents and does not invent any amount or date."
+      "explanation": "The answer explicitly states that no January quote exists in the documents, fully satisfying the 'not found' pass criteria."
     },
     {
       "id": "PUB-8",
@@ -76,7 +76,7 @@
       "expected": "2 379,04 € TTC sur les pièces lisibles (Sanitherm 1 246,80 + ElecStock 89,90 + LocaBenne 300,00 + Quincaillerie Bertrand 475,00 + Négoce Bâti Sud 267,34), en signalant qu'un ticket carburant du 27/06 est illisible / en attente de confirmation. Si son montant (85,40 €) a été confirmé par l'utilisateur plus tôt : 2 464,44 € TTC.",
       "generated": "2 379,04 € TTC sur les pièces lisibles (SANITHERM LYON (1 246,80 €) + LOCABENNE SERVICES (300,00 €) + ELECSTOCK SAS (89,90 €) + QUINCAILLERIE BERTRAND (475,00 €) + NÉGOCE BÂTI SUD (267,34 €)), en signalant que 1 ticket(s) (photo_ticket_carburant.jpg) est illisible ou en attente de confirmation. Si le montant du ticket carburant (85,40 €) est confirmé, le total s'élève à 2 464,44 € TTC.",
       "passed": true,
-      "explanation": "The generated answer correctly sums the readable receipts, transparently handles the unreadable receipt, and includes the conditional total if confirmed, fully satisfying the pass criteria."
+      "explanation": "The generated answer correctly sums the lisible expenses, transparently handles the unreadable receipt, and avoids double-counting Sanitherm despite its mention via two channels."
     }
   ]
 }

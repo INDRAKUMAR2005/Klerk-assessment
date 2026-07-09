@@ -60,6 +60,12 @@ app.post('/api/webhooks/unipile', async (req: Request, res: Response) => {
     return;
   }
 
+  // Discard messages sent by the bot itself to prevent infinite loops (NFR-1 / webhook loop)
+  if (req.body.from_me === true || req.body.message?.from_me === true) {
+    res.sendStatus(200);
+    return;
+  }
+
   // Ensure message is from a trusted artisan to prevent responding to our own messages
   const senderId = sender?.attendee_provider_id || sender?.id || '';
   const artisanId = config.unipile.artisanWhatsappId;
