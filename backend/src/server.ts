@@ -45,10 +45,8 @@ app.get('/health', (req: Request, res: Response) => {
  * Unipile webhook receiver (Flow A / WhatsApp text or attachments)
  */
 app.post('/api/webhooks/unipile', async (req: Request, res: Response) => {
+  webhookLogs.push(`[${new Date().toISOString()}] Raw webhook body: ${JSON.stringify(req.body)}`);
   const { event, message_id, chat_id, message, sender, attachments, account_type } = req.body;
-
-  webhookLogs.push(`[${new Date().toISOString()}] Received webhook: event=${event}, message_id=${message_id}, chat_id=${chat_id}, sender=${JSON.stringify(sender)}, account_type=${account_type}`);
-  if (webhookLogs.length > 100) webhookLogs.shift();
 
   // We only process message_received events for WhatsApp
   if (event !== 'message_received' || account_type !== 'WHATSAPP') {
