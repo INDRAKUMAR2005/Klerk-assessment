@@ -14,6 +14,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+export const webhookLogs: string[] = [];
+
+/**
+ * Log viewing endpoint for debugging webhooks
+ */
+app.get('/api/webhook-logs', (req: Request, res: Response) => {
+  res.json({ logs: webhookLogs });
+});
+
 // Start validation checks
 validateConfig();
 
@@ -38,6 +47,9 @@ app.get('/health', (req: Request, res: Response) => {
 app.post('/api/webhooks/unipile', async (req: Request, res: Response) => {
   const { event, message_id, chat_id, message, sender, attachments, account_type } = req.body;
 
+  webhookLogs.push(`[${new Date().toISOString()}] Received webhook: event=${event}, message_id=${message_id}, chat_id=${chat_id}, sender=${JSON.stringify(sender)}, account_type=${account_type}`);
+  if (webhookLogs.length > 100) webhookLogs.shift();
+
   // We only process message_received events for WhatsApp
   if (event !== 'message_received' || account_type !== 'WHATSAPP') {
     res.sendStatus(200);
@@ -56,11 +68,14 @@ app.post('/api/webhooks/unipile', async (req: Request, res: Response) => {
   const artisanIds = artisanId.split(',').map(normalizeId).filter(Boolean);
   let isArtisan = artisanIds.includes(senderNorm);
 
-  console.log(`[Unipile Webhook] Sender: "${senderId}" (normalized: "${senderNorm}"), Trusted artisans: [${artisanIds.join(', ')}]`);
+  const logMsg = `[Unipile Webhook] Sender: "${senderId}" (normalized: "${senderNorm}"), Trusted artisans: [${artisanIds.join(', ')}], isArtisanDirect: ${isArtisan}`;
+  console.log(logMsg);
+  webhookLogs.push(logMsg);
   
   if (!isArtisan && chat_id) {
     try {
       const chatUrl = `${config.unipile.apiUrl}/api/v1/chats/${chat_id}`;
+      webhookLogs.push(`[Unipile Webhook] Checking chat URL: ${chatUrl}`);
       const chatRes = await axios.get(chatUrl, {
         headers: {
           'X-API-KEY': config.unipile.apiKey,
@@ -68,20 +83,27 @@ app.post('/api/webhooks/unipile', async (req: Request, res: Response) => {
         },
       });
       const attendeeIdentifier = chatRes.data?.attendee_public_identifier || '';
+      webhookLogs.push(`[Unipile Webhook] Fetched chat details: attendee_public_identifier=${attendeeIdentifier}`);
       if (attendeeIdentifier) {
         const attendeeNorm = normalizeId(attendeeIdentifier);
         if (artisanIds.includes(attendeeNorm)) {
           isArtisan = true;
-          console.log(`[Unipile Webhook] Verified sender via chat attendee public identifier: ${attendeeIdentifier}`);
+          const logMsg2 = `[Unipile Webhook] Verified sender via chat attendee public identifier: ${attendeeIdentifier}`;
+          console.log(logMsg2);
+          webhookLogs.push(logMsg2);
         }
       }
     } catch (err: any) {
-      console.warn(`[Unipile Webhook] Failed to fetch chat details for verification: ${err.message}`);
+      const logErr = `[Unipile Webhook] Failed to fetch chat details for verification: ${err.message}`;
+      console.warn(logErr);
+      webhookLogs.push(logErr);
     }
   }
 
   if (!isArtisan) {
-    console.log(`[Unipile Webhook] Ignoring message from non-artisan sender: ${senderId}`);
+    const logMsg3 = `[Unipile Webhook] Ignoring message from non-artisan sender: ${senderId}`;
+    console.log(logMsg3);
+    webhookLogs.push(logMsg3);
     res.sendStatus(200);
     return;
   }
